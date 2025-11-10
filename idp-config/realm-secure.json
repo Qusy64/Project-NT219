@@ -1,0 +1,16 @@
+{
+  "realm": "secure",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "api-client",
+      "secret": "api-secret",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  ]
+}

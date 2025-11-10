@@ -1,0 +1,36 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: backend
+    url: http://backend:8001
+    routes:
+      - name: api
+        paths: ["/api"]
+        strip_path: true
+
+plugins:
+  - name: jwt
+    route: { name: api }
+    config:
+      key_claim_name: iss
+      claims_to_verify: ["exp"]
+      run_on_preflight: false
+
+consumers:
+  - username: keycloak-issuer
+
+jwt_secrets:
+  - consumer: keycloak-issuer
+    key: "http://localhost:8080/realms/secure"
+    algorithm: "RS256"
+    rsa_public_key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5r5xCBUFsEGxHHSOc5rR
+      EKGW1a8QGhU+wL1V8htA19oFa3cXgPI4bTxA+y/USzmWkRQzLyEA+Jb5ki2oBZfv
+      EtZw+TtD62UzWJmSoh97voqteNYbzPu39v9b/f6YpsiVR7bNc5jxgNtGBYMv+9PR
+      SuPN+9Qtcn0LEQWEycbbaRi6r1bewSejAUq+JAcJSC76JCG5fUBjTJvruss63a1O
+      tFRTzMZrBw4xSIlucv7I9sPg8MHN9z7Pr8QR6vBAJesg3z+/tRNbKIXGSKXaKDxR
+      z3W55G3oAexaAtydWxqphswaRKXMMh0sUcBa5tDMmGIbmoprmwJGAyb9FaEICxNX
+      FQIDAQAB
+      -----END PUBLIC KEY-----
