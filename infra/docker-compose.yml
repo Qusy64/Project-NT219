@@ -3,11 +3,14 @@ version: "3.9"
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.5
-    command: ["start-dev", "--import-realm"]
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+      - --import-realm
     volumes:
+      - keycloak_data:/opt/keycloak/data
       - ../idp-config/realm-secure.json:/opt/keycloak/data/import/realm.json:ro
     ports:
       - "8080:8080"
@@ -20,6 +23,7 @@ services:
       - ../services/backend:/app:ro
     ports:
       - "8002:8001"
+
   kong:
     image: kong:3.6
     environment:
@@ -34,3 +38,6 @@ services:
     depends_on:
       - backend
       - keycloak
+
+volumes:
+  keycloak_data:

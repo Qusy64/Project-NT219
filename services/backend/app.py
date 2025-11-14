@@ -79,3 +79,9 @@ def system_info():
             if k.startswith("KONG") or k.startswith("KEYCLOAK")
         },
     }
+
+@app.get("/hello")
+async def hello(req: Request):
+    sub = req.headers.get("x-user-sub", "anonymous")
+    scope = req.headers.get("x-user-scope", "")
+    return {"message": f"hello {sub}", "scope": scope}

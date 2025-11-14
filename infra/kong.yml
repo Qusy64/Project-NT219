@@ -6,31 +6,40 @@ services:
     url: http://backend:8001
     routes:
       - name: api
-        paths: ["/api"]
+        paths:
+          - /api
         strip_path: true
+        protocols: [ "http", "https" ]
+
+      - name: public-hello
+        paths:
+          - /hello
+        strip_path: false
+        protocols: [ "http", "https" ]
 
 plugins:
   - name: jwt
-    route: { name: api }
+    route: api
     config:
-      key_claim_name: iss
-      claims_to_verify: ["exp"]
+      key_claim_name: iss           # lấy iss trong payload để tìm secret
+      claims_to_verify: ["exp"]     # verify exp
       run_on_preflight: false
+      secret_is_base64: false
 
 consumers:
   - username: keycloak-issuer
 
 jwt_secrets:
   - consumer: keycloak-issuer
-    key: "http://localhost:8080/realms/secure"
+    key: "http://localhost:8080/realms/secure"   # TRÙNG với "iss" trong token
     algorithm: "RS256"
     rsa_public_key: |
       -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5r5xCBUFsEGxHHSOc5rR
-      EKGW1a8QGhU+wL1V8htA19oFa3cXgPI4bTxA+y/USzmWkRQzLyEA+Jb5ki2oBZfv
-      EtZw+TtD62UzWJmSoh97voqteNYbzPu39v9b/f6YpsiVR7bNc5jxgNtGBYMv+9PR
-      SuPN+9Qtcn0LEQWEycbbaRi6r1bewSejAUq+JAcJSC76JCG5fUBjTJvruss63a1O
-      tFRTzMZrBw4xSIlucv7I9sPg8MHN9z7Pr8QR6vBAJesg3z+/tRNbKIXGSKXaKDxR
-      z3W55G3oAexaAtydWxqphswaRKXMMh0sUcBa5tDMmGIbmoprmwJGAyb9FaEICxNX
-      FQIDAQAB
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1IKCiIbrAIzlhs3CPlgk
+      p2c18ZEGamL38tQS50ykumjEBMtcI+hq2+l1Tc0BqS+AlOJSUcroxRF6VMA2arRf
+      TcM3irCKigg1VRmDNupaITJMtdlR6w9nC9HLNLBrleGQsg++USwkrIvk7i7O9NNY
+      fHaBPa7hokilrd3sy0QjHmkTuwQTjQSWay4KFbeqn6i5OObEoombnP1/gsYPUHV7
+      6VTYQYHEPK3bN4EYqBpXkdkHQ+D2ZfIG0DOYFMqcxLVOUcr7XvYG+C8seNHfKTku
+      chaWij/ErMzDYbMThDyTEhkdnVKKIA1BJREsZuUfN+3NqInMb9lRtm+8E5iZqXfF
+      QwIDAQAB
       -----END PUBLIC KEY-----
