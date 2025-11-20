@@ -18,7 +18,7 @@ services:
   backend:
     image: python:3.11-slim
     working_dir: /app
-    command: ["bash","-lc","pip install fastapi uvicorn && uvicorn app:app --host 0.0.0.0 --port 8001"]
+    command: ["bash","-lc","pip install fastapi uvicorn pyjwt && uvicorn app:app --host 0.0.0.0 --port 8001"]
     volumes:
       - ../services/backend:/app:ro
     ports:
@@ -30,8 +30,13 @@ services:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_LOG_LEVEL: info
+      # ⭐ bật plugin HMAC custom
+      KONG_PLUGINS: "bundled,hmac-signature"
     volumes:
+      # kong.yml của bạn
       - ../infra/kong.yml:/etc/kong/kong.yml:ro
+      # ⭐ MOUNT plugin HMAC từ project vào đúng chỗ Kong
+      - ../kong-plugins/hmac-signature:/usr/local/share/lua/5.1/kong/plugins/hmac-signature:ro
     ports:
       - "8000:8000"
       - "8001:8001"

@@ -5,16 +5,22 @@ services:
   - name: backend
     url: http://backend:8001
     routes:
-      - name: api
-        paths:
-          - /api
-        strip_path: true
-        protocols: [ "http", "https" ]
-
       - name: public-hello
         paths:
           - /hello
         strip_path: false
+        protocols: [ "http", "https" ]
+        
+      - name: api
+        paths:
+          - /api
+        strip_path: false
+        protocols: [ "http", "https" ]
+
+      - name: hmac-api
+        paths:
+          - /hmac
+        strip_path: true
         protocols: [ "http", "https" ]
 
 plugins:
@@ -25,6 +31,12 @@ plugins:
       claims_to_verify: ["exp"]     # verify exp
       run_on_preflight: false
       secret_is_base64: false
+  - name: hmac-signature
+    route: hmac-api
+    config:
+      secrets: 
+        client-1: super-secret-123
+      max_clock_skew: 100          # 100s
 
 consumers:
   - username: keycloak-issuer
