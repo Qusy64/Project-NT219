@@ -43,7 +43,7 @@ consumers:
 
 jwt_secrets:
   - consumer: keycloak-issuer
-    key: "D4GlALhttFw0QiIgfRX-rUZkQ-mHdkGlymLkHx_rjdo"   # TRÙNG với "iss" trong token
+    key: "D4GlALhttFw0QiIgfRX-rUZkQ-mHdkGlymLkHx_rjdo"   
     algorithm: "RS256"
     rsa_public_key: |
       -----BEGIN PUBLIC KEY-----
@@ -57,7 +57,7 @@ jwt_secrets:
       -----END PUBLIC KEY-----
 
   - consumer: keycloak-issuer
-    key: "5ajH2gHj0dyKxF7n1SuCepEcKu6tlF44g2H9C2SDucc"          # thay bằng đúng kid bạn vừa ghi
+    key: "5ajH2gHj0dyKxF7n1SuCepEcKu6tlF44g2H9C2SDucc"          
     algorithm: "RS256"
     rsa_public_key: |
       -----BEGIN PUBLIC KEY-----
