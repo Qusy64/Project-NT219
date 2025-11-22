@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid lg:grid-cols-[2fr,1fr] gap-6">
+  <section>
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <div class="text-xs text-slate-400 mb-0.5">{{ doc.subject }}</div>
+        <h1 class="text-xl md:text-2xl font-semibold">{{ doc.title }}</h1>
+      </div>
+      <div class="text-xs text-slate-400 text-right">
+        <div>{{ (doc.size // 1024) }} KB</div>
+        <div>{{ doc.uploaded_at.strftime("%d/%m/%Y") }}</div>
+      </div>
+    </div>
+
+    <p class="text-sm text-slate-300 mb-3">{{ doc.description }}</p>
+
+    <div class="flex flex-wrap items-center gap-2 mb-4 text-xs">
+      {% if doc.tags %}
+        {% for t in doc.tags.split(",") %}
+          <span class="px-2 py-1 rounded-full bg-slate-800 border border-slate-700">{{ t.strip() }}</span>
+        {% endfor %}
+      {% endif %}
+      <span class="ml-auto text-slate-400">
+        {{ doc.original_filename }}
+      </span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4 text-sm">
+      <a href="/files/{{ doc.filename }}"
+         class="px-3 py-1.5 rounded-xl bg-indigo-500 hover:bg-indigo-400">Tải về</a>
+
+      <a href="/share/{{ doc.id }}"
+         class="px-3 py-1.5 rounded-xl border border-slate-700 hover:bg-slate-800">Share link read-only</a>
+
+      {% if not readonly and current_user %}
+        <form action="/documents/{{ doc.id }}/favorite" method="post">
+          <button class="px-3 py-1.5 rounded-xl border border-slate-700 hover:bg-slate-800">
+            {% if is_favorite %}★ Đã đánh dấu{% else %}☆ Đánh dấu ưa thích{% endif %}
+          </button>
+        </form>
+      {% endif %}
+
+      {% if not readonly %}
+        <form action="/documents/{{ doc.id }}/ai/summary" method="post">
+          <button class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400">
+            AI: Tóm tắt (demo)
+          </button>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if is_pdf %}
+      <div class="border border-slate-800 rounded-2xl overflow-hidden h-[480px] mb-4">
+        <iframe src="/files/{{ doc.filename }}" class="w-full h-full bg-slate-900"></iframe>
+      </div>
+    {% else %}
+      <div class="text-sm text-slate-400 mb-4">
+        (Không phải PDF – chỉ hỗ trợ tải về và đọc bằng ứng dụng ngoài.)
+      </div>
+    {% endif %}
+
+    {% if ai_summary %}
+      <div class="border border-emerald-600/60 bg-emerald-950/50 rounded-2xl p-4 mb-4 text-sm">
+        <div class="font-semibold mb-1 text-emerald-300">AI summary (demo)</div>
+        <p>{{ ai_summary }}</p>
+      </div>
+    {% endif %}
+
+    {% if not readonly %}
+    <section class="mt-4">
+      <h2 class="font-semibold mb-2 text-sm">Bình luận</h2>
+      <form action="/documents/{{ doc.id }}/comment" method="post" class="mb-3">
+        <textarea name="content" rows="2" placeholder="Viết bình luận..."
+                  class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm mb-2"></textarea>
+        <button class="px-3 py-1.5 rounded-xl bg-indigo-500 text-xs font-medium hover:bg-indigo-400">
+          Gửi
+        </button>
+      </form>
+      {% endif %}
+      <div class="space-y-2">
+        {% for c in comments %}
+          <div class="border border-slate-800 rounded-2xl px-3 py-2 text-xs">
+            <div class="flex justify-between mb-1">
+              <span class="font-semibold">{{ c.user.username if c.user else "User" }}</span>
+              <span class="text-slate-500">{{ c.created_at.strftime("%d/%m/%Y %H:%M") }}</span>
+            </div>
+            <p class="text-slate-200">{{ c.content }}</p>
+          </div>
+        {% else %}
+          <p class="text-xs text-slate-400">Chưa có bình luận nào.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </section>
+
+  <aside class="space-y-4">
+    <div class="border border-slate-800 rounded-2xl p-4 bg-slate-900/60">
+      <h2 class="font-semibold text-sm mb-2">Thông tin tài liệu</h2>
+      <ul class="text-xs text-slate-300 space-y-1">
+        <li>• Chủ sở hữu: {{ doc.owner.username if doc.owner else "N/A" }}</li>
+        <li>• Kiểu: {{ doc.content_type }}</li>
+        <li>• Public: {{ "Có" if doc.is_public else "Không" }}</li>
+      </ul>
+    </div>
+
+    <div class="border border-slate-800 rounded-2xl p-4 bg-slate-900/60">
+      <h2 class="font-semibold text-sm mb-2">Tài liệu liên quan</h2>
+      {% if related_docs %}
+        <ul class="text-xs space-y-1.5">
+          {% for r in related_docs %}
+            <li>
+              <a href="/documents/{{ r.id }}" class="text-indigo-300 hover:text-indigo-200">
+                {{ r.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-xs text-slate-400">Không có tài liệu nào khác cùng môn.</p>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}
