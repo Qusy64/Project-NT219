@@ -27,7 +27,7 @@ plugins:
   - name: jwt
     route: api
     config:
-      key_claim_name: iss           # lấy iss trong payload để tìm secret
+      key_claim_name: kid           # lấy iss trong payload để tìm secret
       claims_to_verify: ["exp"]     # verify exp
       run_on_preflight: false
       secret_is_base64: false
@@ -43,7 +43,7 @@ consumers:
 
 jwt_secrets:
   - consumer: keycloak-issuer
-    key: "http://localhost:8080/realms/secure"   # TRÙNG với "iss" trong token
+    key: "D4GlALhttFw0QiIgfRX-rUZkQ-mHdkGlymLkHx_rjdo"   
     algorithm: "RS256"
     rsa_public_key: |
       -----BEGIN PUBLIC KEY-----
@@ -54,4 +54,19 @@ jwt_secrets:
       6VTYQYHEPK3bN4EYqBpXkdkHQ+D2ZfIG0DOYFMqcxLVOUcr7XvYG+C8seNHfKTku
       chaWij/ErMzDYbMThDyTEhkdnVKKIA1BJREsZuUfN+3NqInMb9lRtm+8E5iZqXfF
       QwIDAQAB
+      -----END PUBLIC KEY-----
+
+  - consumer: keycloak-issuer
+    key: "5ajH2gHj0dyKxF7n1SuCepEcKu6tlF44g2H9C2SDucc"          
+    algorithm: "RS256"
+    rsa_public_key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAshShSdd5n/
+      nUAgeAri86bDrHXNGx+CICM6cjOoW20mnI9lzf5H/KTjsqDLL0dAKf4L
+      ZIOcHSuFmVwpsZLb/QwOMarKhdXQqLRDCJnnG/Kp916Lrf0AaHMyt
+      LCQ8ZAjETZDG1XI0XpsY6DDJ23Bh5nN4q1V4C3fhysSWfZdC7kWLm
+      AljWqf802omZwez5BhDiSdFOV7fz/oOnW4GhjQa8pPSiPnJDMxrt4uY
+      +MgCEAh0G7+3MSzgmCJljx1VAb7Hl/oT+Mcif73/A6iznGX6ISlQN7PjA
+      98R5XKMjKi+NPug8oaos1GbYBxVcRHC+EvL6dqQWnPpxGqPW9eGsj
+      e6XBwIDAQAB
       -----END PUBLIC KEY-----
