@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 from fastapi import FastAPI, Request, Header, Depends, HTTPException, status
+=======
+from fastapi import FastAPI, Request, Header
+>>>>>>> b47091c9b63e99981b8e58fbff809a0fc260c83d
 from typing import Optional
 from datetime import datetime
 import os
 
+<<<<<<< HEAD
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 
@@ -78,12 +83,44 @@ async def read_root(
     API endpoint được bảo vệ bởi Kong JWT plugin.
     Kong sẽ verify JWT, sau đó forward request tới backend.
     """
+=======
+app = FastAPI(
+    title="Secure Backend API",
+    description="Demo backend protected by Kong + Keycloak (JWT RS256)",
+    version="1.1.0",
+)
+
+@app.get("/")
+def index():
+    return {
+        "service": "Secure Backend API",
+        "status": "running",
+        "time": datetime.utcnow().isoformat() + "Z",
+        "version": app.version,
+        "docs": "/docs",
+        "openapi": "/openapi.json",
+    }
+
+# API protected route
+@app.get("/api")
+async def read_root(
+    request: Request,
+    authorization: Optional[str] = Header(None),
+    x_user: Optional[str] = Header(None),
+    x_client_id: Optional[str] = Header(None),
+):
+    """
+    API endpoint được bảo vệ bởi Kong JWT plugin.
+    Kong sẽ verify JWT, sau đó forward request tới backend.
+    """
+>>>>>>> b47091c9b63e99981b8e58fbff809a0fc260c83d
     info = {
         "message": "Auth success via Kong (Keycloak introspection)",
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "headers": {
             "x-user": x_user,
             "x-client-id": x_client_id,
+<<<<<<< HEAD
         },
         "from": request.client.host,
     }
@@ -122,10 +159,53 @@ def system_info():
         },
     }
 
+=======
+        },
+        "from": request.client.host,
+    }
+    if authorization:
+        info["jwt_token_prefix"] = authorization[:30] + "..."
+    return info
+
+
+# Echo endpoint
+@app.post("/api/echo")
+async def echo(request: Request):
+    """
+    Trả lại payload client gửi để test body forwarding qua Kong.
+    """
+    data = await request.json()
+    return {
+        "echo": data,
+        "received_at": datetime.utcnow().isoformat() + "Z",
+    }
+
+# Health check endpoint
+
+@app.get("/health")
+def health():
+    return {"status": "ok", "time": datetime.utcnow().isoformat() + "Z"}
+
+
+# System info endpoint
+@app.get("/info")
+def system_info():
+    return {
+        "hostname": os.getenv("HOSTNAME", "unknown"),
+        "python_version": os.sys.version,
+        "env_vars": {
+            k: v
+            for k, v in os.environ.items()
+            if k.startswith("KONG") or k.startswith("KEYCLOAK")
+        },
+    }
+
+>>>>>>> b47091c9b63e99981b8e58fbff809a0fc260c83d
 @app.get("/hello")
 async def hello(req: Request):
     sub = req.headers.get("x-user-sub", "anonymous")
     scope = req.headers.get("x-user-scope", "")
+<<<<<<< HEAD
     return {"message": f"hello {sub}", "scope": scope}
 
 @app.get("/api/hello")
@@ -161,3 +241,6 @@ async def hello_admin(payload=Depends(require_role("api_admin"))):
         "roles": roles,
         "time": datetime.utcnow().isoformat() + "Z",
     }
+=======
+    return {"message": f"hello {sub}", "scope": scope}
+>>>>>>> b47091c9b63e99981b8e58fbff809a0fc260c83d
