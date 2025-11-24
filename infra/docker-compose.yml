@@ -17,8 +17,13 @@ services:
 
   backend:
     image: python:3.11-slim
+    environment: 
+      - KEYCLOAK_REALM=secure
+      - KEYCLOAK_BASE_URL=http://keycloak:8080      
+      - KEYCLOAK_INTROSPECT_CLIENT_ID=backend-service
+      - KEYCLOAK_INTROSPECT_CLIENT_SECRET=7Ylsarb9Fbz7Q4hBbQQuMcXzyWdEo9cR
     working_dir: /app
-    command: ["bash","-lc","pip install fastapi uvicorn pyjwt sqlmodel jinja2 python-multipart itsdangerous aiofiles && uvicorn app:app --host 0.0.0.0 --port 8001"]
+    command: ["bash","-lc","pip install fastapi uvicorn httpx pyjwt sqlmodel jinja2 python-multipart itsdangerous aiofiles && uvicorn app:app --host 0.0.0.0 --port 8001"]
     volumes:
       - ../services/backend:/app
     ports:
