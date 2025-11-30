@@ -47,7 +47,7 @@ async def introspect_token(authorization: str = Header(None)):
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="Failed to contact Keycloak introspection endpoint",
         )
-
+ 
     print("=== INTROSPECT DEBUG ===")
     print("URL:", INTROSPECT_URL)
     print("CLIENT_ID:", CLIENT_ID)
