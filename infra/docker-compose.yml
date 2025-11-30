@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ../idp-config/realm-secure.json:/opt/keycloak/data/import/realm.json:ro
+    ports:
+      - "8080:8080"
+
+  backend:
+    image: python:3.11-slim
+    environment: 
+      - KEYCLOAK_REALM=secure
+      - KEYCLOAK_BASE_URL=http://keycloak:8080      
+      - KEYCLOAK_INTROSPECT_CLIENT_ID=backend-service-id
+      - KEYCLOAK_INTROSPECT_CLIENT_SECRET=7Ylsarb9Fbz7Q4hBbQQuMcXzyWdEo9cR
+    working_dir: /app
+    command: ["bash","-lc","pip install fastapi uvicorn httpx pyjwt sqlmodel jinja2 python-multipart itsdangerous aiofiles && uvicorn app:app --host 0.0.0.0 --port 8001"]
+    volumes:
+      - ../services/backend:/app
+    ports:
+      - "8002:8001"
+
+  kong:
+    image: kong:3.6
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
+      KONG_LOG_LEVEL: info
+      # ⭐ bật plugin HMAC custom
+      KONG_PLUGINS: "bundled,hmac-signature"
+      KONG_NGINX_HTTP_INCLUDE: /kong-http.conf
+    volumes:
+      # kong.yml của bạn
+      - ../infra/kong.yml:/etc/kong/kong.yml:ro
+      # ⭐ MOUNT plugin HMAC từ project vào đúng chỗ Kong
+      - ../kong-plugins/hmac-signature:/usr/local/share/lua/5.1/kong/plugins/hmac-signature:ro
+      - ../infra/kong-http.conf:/kong-http.conf:ro
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - backend
+      - keycloak
+
+volumes:
+  keycloak_data:
