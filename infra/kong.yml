@@ -5,6 +5,12 @@ services:
   - name: backend
     url: http://backend:8001
     routes:
+      - name: revocation-demo
+        paths:
+          - /revocation-demo
+        strip_path: false
+        protocols: [ "http", "https" ]
+
       - name: public-hello
         paths:
           - /hello
