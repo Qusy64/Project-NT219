@@ -14,10 +14,16 @@ REALM = os.getenv("KEYCLOAK_REALM", "secure")
 KEYCLOAK_BASE_URL = os.getenv("KEYCLOAK_BASE_URL", "http://keycloak:8080")
 INTROSPECT_URL = f"{KEYCLOAK_BASE_URL}/realms/{REALM}/protocol/openid-connect/token/introspect"
 
+<<<<<<< HEAD
 CLIENT_ID = os.getenv("KEYCLOAK_INTROSPECT_CLIENT_ID", "backend-service-id")
 CLIENT_SECRET = os.getenv("KEYCLOAK_INTROSPECT_CLIENT_SECRET", "")
 
 
+=======
+CLIENT_ID = os.getenv("KEYCLOAK_INTROSPECT_CLIENT_ID", "backend-service")
+CLIENT_SECRET = os.getenv("KEYCLOAK_INTROSPECT_CLIENT_SECRET", "")
+
+>>>>>>> e121e45603e7969203ed06f36fc56209dcf99d20
 async def introspect_token(authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
@@ -25,6 +31,7 @@ async def introspect_token(authorization: str = Header(None)):
             detail="Missing or invalid Authorization header",
         )
 
+<<<<<<< HEAD
     token = authorization.split(" ", 1)[1].strip()
 
     # 👇 Gửi giống hệt introspection_direct.sh
@@ -54,6 +61,20 @@ async def introspect_token(authorization: str = Header(None)):
     print("STATUS:", resp.status_code)
     print("BODY:", resp.text)
     print("========================")
+=======
+    token = authorization.split(" ", 1)[1]
+
+    data = {"token": token}
+
+    async with httpx.AsyncClient(
+        timeout=5.0,
+        auth=(CLIENT_ID, CLIENT_SECRET)   # ⭐ BASIC AUTH CHUẨN KEYCLOAK
+    ) as client:
+        resp = await client.post(INTROSPECT_URL, data=data)
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        resp = await client.post(INTROSPECT_URL, data=data)
+>>>>>>> e121e45603e7969203ed06f36fc56209dcf99d20
 
     if resp.status_code != 200:
         raise HTTPException(
@@ -61,6 +82,7 @@ async def introspect_token(authorization: str = Header(None)):
             detail="Token introspection failed",
         )
 
+<<<<<<< HEAD
     try:
         body = resp.json()
     except Exception as e:
@@ -73,6 +95,9 @@ async def introspect_token(authorization: str = Header(None)):
             detail="Invalid JSON from introspection endpoint",
         )
 
+=======
+    body = resp.json()
+>>>>>>> e121e45603e7969203ed06f36fc56209dcf99d20
     if not body.get("active"):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
