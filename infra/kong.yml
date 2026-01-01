@@ -76,7 +76,6 @@ jwt_secrets:
       98R5XKMjKi+NPug8oaos1GbYBxVcRHC+EvL6dqQWnPpxGqPW9eGsj
       e6XBwIDAQAB
       -----END PUBLIC KEY-----
-<<<<<<< HEAD
 certificates:
   - cert: |
       -----BEGIN CERTIFICATE-----
@@ -98,5 +97,3 @@ certificates:
       -----END EC PRIVATE KEY-----
     snis: 
       - name: localhost
-=======
->>>>>>> d9551c40136259999dfbd956f9f41f09b508db40
