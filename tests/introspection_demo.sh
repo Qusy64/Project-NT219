@@ -2,14 +2,14 @@
 set -euo pipefail
 
 REALM="secure"
-KC_HOST="localhost:8080"
+KC_HOST="localhost:8080"   # SỬA: Keycloak vẫn HTTP như cũ
 CLIENT_ID="backend-service-id"
 CLIENT_SECRET="7Ylsarb9Fbz7Q4hBbQQuMcXzyWdEo9cR"
 
 USERNAME="user1-demo-token-revocation"
 PASSWORD="user1-demo"
 
-BASE_URL="http://$KC_HOST/realms/$REALM/protocol/openid-connect"
+BASE_URL="http://$KC_HOST/realms/$REALM/protocol/openid-connect"   # SỬA: http
 TOKEN_ENDPOINT="$BASE_URL/token"
 INTROSPECT_ENDPOINT="$BASE_URL/token/introspect"
 

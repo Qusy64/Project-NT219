@@ -2,7 +2,7 @@
 set -euo pipefail
 
 KONG_API_URL="http://localhost:8002/api"
-TOKEN_ES256=$(clients/get_token_es256.sh)
+TOKEN_ES256=$(./get_token_es256.sh)
 
 echo "[1/3] TOKEN_ES256: ${TOKEN_ES256:0:50}..."
 

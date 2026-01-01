@@ -35,17 +35,21 @@ services:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
       KONG_LOG_LEVEL: info
-      # ⭐ bật plugin HMAC custom
+      # bật plugin HMAC custom
       KONG_PLUGINS: "bundled,hmac-signature"
       KONG_NGINX_HTTP_INCLUDE: /kong-http.conf
+      KONG_PROXY_LISTEN: "0.0.0.0:8000, 0.0.0.0:8443 ssl"
+
     volumes:
-      # kong.yml của bạn
+      # kong.yml
       - ../infra/kong.yml:/etc/kong/kong.yml:ro
-      # ⭐ MOUNT plugin HMAC từ project vào đúng chỗ Kong
+      # MOUNT plugin HMAC từ project vào đúng chỗ Kong
       - ../kong-plugins/hmac-signature:/usr/local/share/lua/5.1/kong/plugins/hmac-signature:ro
       - ../infra/kong-http.conf:/kong-http.conf:ro
+      - ../certs:/certs:ro
     ports:
       - "8000:8000"
+      - "8443:8443"
       - "8001:8001"
     depends_on:
       - backend

@@ -17,4 +17,4 @@ PAYLOAD=$(echo $TOKEN | cut -d . -f2 | base64 -d | jq '.iss="https://fake-issuer
 FORGED="$HEADER.$PAYLOAD.fake"
 
 echo "[3] Call API with wrong issuer..."
-curl -i -H "Authorization: Bearer $FORGED" http://localhost:8000/api/hello
+curl -k -i -H "Authorization: Bearer $FORGED" https://localhost:8443/api/hello

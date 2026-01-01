@@ -13,4 +13,4 @@ echo "[2] Sleeping 65s for token to expire..."
 sleep 65
 
 echo "[3] Calling API..."
-curl -i -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/hello
+curl -k -i -H "Authorization: Bearer $TOKEN" https://localhost:8443/api/hello

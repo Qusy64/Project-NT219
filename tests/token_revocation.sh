@@ -17,6 +17,9 @@ TOKEN_ENDPOINT="$BASE_URL/token"
 REVOCATION_ENDPOINT="$BASE_URL/revoke"
 USERINFO_ENDPOINT="$BASE_URL/userinfo"
 
+# (THÊM) API của bạn đi qua Kong HTTPS
+API_URL="https://localhost:8443/api/hello"
+
 echo "[1] Lấy access token..."
 RESP=$(curl -s -X POST "$TOKEN_ENDPOINT" \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -26,9 +29,6 @@ RESP=$(curl -s -X POST "$TOKEN_ENDPOINT" \
   -d "username=$USERNAME" \
   -d "password=$PASSWORD" \
   -d "scope=openid")
-
-# Debug nếu cần
-# echo "[DEBUG] TOKEN RESPONSE = $RESP"
 
 ACCESS_TOKEN=$(echo "$RESP" | jq -r '.access_token')
 
@@ -59,5 +59,11 @@ echo
 
 echo "[4] Gọi lại /userinfo với cùng token (expect 401/403 hoặc error)..."
 curl -i "$USERINFO_ENDPOINT" \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+echo
+echo
+
+echo "[5] (Gateway HTTPS) Gọi API qua Kong với token đã revoke (expect 401/403 nếu hệ thống check revoke/introspect)..."
+curl -k -i "$API_URL" \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 echo
